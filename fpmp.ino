@@ -77,8 +77,11 @@ void loop() {
 }
 
 /* this function is called by audio when current mp3 finishes */
-void audio_eof_mp3(const char *info) {  //end of file
-  PlayNextSong();
+void audio_eof_mp3(const char *info) { //end of file
+  /* play next song only if box is open */
+  if (reedSwitchState == HIGH){
+    PlayNextSong();
+  }
 }
 
 void PlayNextSong() {
