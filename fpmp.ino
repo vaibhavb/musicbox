@@ -69,7 +69,8 @@ void loop() {
     Serial.println("done");
   } else if (isSongPlaying) {
     Serial.println("Continue to play the song");
-    audio.loop()
+    audio.loop();
+    audio.setVolume(20); 
   }
     else {
     Serial.println("No song is playing and the box is closed");
