@@ -50,6 +50,8 @@ void setup() {
   }
   audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
   RootDir = SD.open("/");
+  Serial.println("setting volume");
+  audio.setVolume(20);  // Check volume level and adjust if necassary
 }
 
 /* this function is called repeated by adruino, using it to check sensor states */
@@ -60,9 +62,6 @@ void loop() {
     Serial.println("looping");
     /* audio_eof_mp3 will be called when current song finishes */
     audio.loop();
-    Serial.println("setting volume");
-    audio.setVolume(20);  // Check volume level and adjust if necassary
-
     Serial.println("Set song playing = true");
     isSongPlaying = true;
     PlayNextSong();
@@ -70,7 +69,6 @@ void loop() {
   } else if (isSongPlaying) {
     Serial.println("Continue to play the song");
     audio.loop();
-    audio.setVolume(20); 
   }
     else {
     Serial.println("No song is playing and the box is closed");
