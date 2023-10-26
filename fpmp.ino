@@ -21,11 +21,7 @@
 #define I2S_BCLK 27  // I2S
 #define I2S_LRC 26
 
-// #define VolPin        13
-
 Audio audio;
-
-// uint8_t Volume;                         // range is 0 to 21
 
 File RootDir;
 
@@ -131,21 +127,3 @@ bool MusicFile(String FileName) {
   else
     return false;
 }
-
-
-// uint8_t GetVolume()
-// {
-//   // looks at the ADC pin that the potentiometer is connected to.
-//   // returns the value as a volume setting
-//   // The esp32's ADC has linerality problems at top and bottom we will ignore them and only respond to values in the middle range
-
-//   uint16_t VolumeSettingReading;
-
-//   VolumeSettingReading=analogRead(VolPin);
-//   if(VolumeSettingReading<25)  // because of problems mentioned above, anything below 25 will be 0 volume
-//     return 0;
-//   if(VolumeSettingReading>4000) // because of problems mentioned above, anything above 4000 will be 21 volume
-//     return 21;
-//   // If we get this far we are in the middle range that should be linear 500-4000
-//   return uint8_t(((VolumeSettingReading-25)/190));  // this will give the correct 0-21 range
-// }
