@@ -27,11 +27,16 @@ File RootDir;
 
 int reedSwitchState;
 bool isSongPlaying;
+int loopCount;
 
 void setup() {
+  int reedSwitchState = LOW;
+  bool isSongPlaying = false;
+  int loopCount = 0;
+
   Serial.begin(57600);
   Serial.println("Setup");
-  // Print some useful debug output - the filename and compilation time 
+  // Print some useful debug output - the filename and compilation time
   Serial.println(__FILE__);
   Serial.println("Compiled: " __DATE__ ", " __TIME__);
 
@@ -47,36 +52,38 @@ void setup() {
   audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
   RootDir = SD.open("/");
   Serial.println("setting volume");
-  audio.setVolume(20);  // Check volume level and adjust if necassary
+  audio.setVolume(10);  // Check volume level and adjust if necassary
 }
 
 /* this function is called repeated by adruino, using it to check sensor states */
 void loop() {
   reedSwitchState = digitalRead(REED_SWITCH);  // read state
 
-  if (reedSwitchState == HIGH) {
-    Serial.println("looping");
-    /* audio_eof_mp3 will be called when current song finishes */
+  if (isSongPlaying) {
+    // Serial.println("Song is playing");
     audio.loop();
+  } else if (reedSwitchState == HIGH && !isSongPlaying) {
+    /* audio_eof_mp3 will be called when current song finishes */
+    // audio.loop();
     Serial.println("Set song playing = true");
     isSongPlaying = true;
     PlayNextSong();
     Serial.println("done");
-  } else if (isSongPlaying) {
-    Serial.println("Continue to play the song");
-    audio.loop();
+  } else {
+    if (loopCount % 20 == 0) {
+      Serial.println("No song is playing and the box is closed");
+    }
   }
-    else {
-    Serial.println("No song is playing and the box is closed");
-  }
+  loopCount += 1;
 }
 
 /* this function is called by audio when current mp3 finishes */
-void audio_eof_mp3(const char *info) { //end of file
+void audio_eof_mp3(const char *info) {  //end of file
   /* play next song only if box is open */
-  if (reedSwitchState == HIGH){
-    PlayNextSong();
-  }
+  isSongPlaying = false;
+  // if (reedSwitchState == HIGH){
+  //   PlayNextSong();
+  // }
 }
 
 void PlayNextSong() {
@@ -96,6 +103,8 @@ void PlayNextSong() {
         return;
       }
       //else we've reached the end of all files in this directory, just rewind back to beginning
+      entry.close();
+      Serial.println("Rewind directory");
       RootDir.rewindDirectory();  // reset back to beginning
       DirRewound = true;          // Flag that we've rewound
     } else {
